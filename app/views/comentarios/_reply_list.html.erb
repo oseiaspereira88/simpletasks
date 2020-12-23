@@ -1,0 +1,44 @@
+<% @comentarios.each do |comentario| %>
+
+  <li>
+    <!-- Avatar -->
+    <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>
+    <!-- Contenedor del Comentario -->
+    <div class="comment-box" style="width: 80%;">
+      <div class="comment-head">
+        <i class="fa fa-heart"></i>
+        <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
+        <%if comentario.created_at.day == Date.today.day %>
+          <%if (Time.now.hour - comentario.created_at.hour)<2 && (Time.now.min<comentario.created_at.min)%>
+            <span>À <%= (comentario.created_at.min - Time.now.min).abs %> minuto(s)</span>
+          <% else %>
+            <span>À <%= (Time.now.hour - comentario.created_at.hour).abs %> horas(s)</span>
+          <% end %>
+        <% else %>
+          <span>À <%= (Date.today - comentario.created_at.day).abs %> dia(s)</span>
+        <% end %>
+        <br>
+        <h6 class="comment-name">
+          <a href="#">
+<!--            <strong><%# user.find(comentario.autor_id).nome %></strong></a>-->
+            <strong><%= "Oséias Pereira" %></strong></a> comentou
+        </h6>
+      </div>
+      <div class="comment-content">
+        <%= comentario.texto %>
+      </div>
+
+      <%= form_for @comentario, remote:true, class:"comentarioForm" do |f| %>
+        <div class="field">
+          <%= hidden_field_tag "comentario_parent_id", comentario.id %><br>
+          <%= f.text_field :texto, id:"inputComentario#{comentario.id}", class:"form-control", placeholder:"Escreva seu comentário aqui..." %><br>
+        </div>
+        <div class="actions">
+          <%= f.submit "Comentar", class:"btn btn-primary" %>
+        </div>
+      <% end %>
+
+    </div>
+  </li>
+
+<% end %>

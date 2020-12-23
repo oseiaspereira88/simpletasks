@@ -7,6 +7,7 @@ class ComentariosController < ApplicationController
   end
 
   def create
+    @tarefa = Tarefa.find(params[:tarefa_id])
     @comentario = Comentario.new(comentario_params)
     @comentario.save
     @comentarios = Comentario.all.reverse
@@ -29,6 +30,7 @@ class ComentariosController < ApplicationController
     @comentario = Comentario.find(params[:id])
     @comentario.destroy
     @comentarios = Comentario.all.reverse
+    @tarefas = Tarefa.all
   end
 
   private

@@ -1,0 +1,54 @@
+<% @comentarios.each do |comentario| %>
+  <li>
+    <div class="comment-main-level" style="width: auto;">
+      <!-- Avatar -->
+      <div class="comment-avatar">
+        <img src="https://avatars0.githubusercontent.com/u/36075604?s=400&u=0add815dd2b67fb4677473b098909061db475b9b&v=4" alt="">
+      </div>
+      <!-- Contenedor del Comentario -->
+      <div class="comment-box" style="width: 80%;">
+        <div class="comment-head" style="height: auto;">
+          <i class="fa fa-heart"></i>
+
+          <i onclick="this.firstChild.click();" class="fa fa-trash"><%= link_to '', comentario, remote:true, method: :delete, data: { confirm: 'Tem certeza?' } -%></i>
+          <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
+            <%if comentario.created_at.day == Date.today.day %>
+              <%if (Time.now.hour - comentario.created_at.hour)<2 && (Time.now.min<comentario.created_at.min)%>
+                <span>À <%= (comentario.created_at.min - Time.now.min).abs %> minuto(s)</span>
+              <% else %>
+                <span>À <%= (Time.now.hour - comentario.created_at.hour).abs %> horas(s)</span>
+              <% end %>
+            <% else %>
+              <span>À <%= (Date.today - comentario.created_at.day).abs %> dia(s)</span>
+            <% end %>
+          <br>
+          <h6 class="comment-name">
+            <a href="#">
+              <!--            <strong><%# user.find(comentario.autor_id).nome %></strong></a>-->
+              <strong><%= "Oséias Pereira" %></strong>
+            </a> comentou
+          </h6>
+      </div>
+      <div class="comment-content">
+        <%= comentario.texto %>
+      </div>
+
+      <%= form_for @comentario, remote:true, class:"comentarioForm" do |f| %>
+        <div class="field">
+          <%= hidden_field_tag "comentario_parent_id", comentario.id %><br>
+          <%= f.text_field :texto, id:"inputComentario#{comentario.id}", class:"form-control", placeholder:"Escreva seu comentário aqui..." %><br>
+        </div>
+        <div class="actions">
+          <%= f.submit "Comentar", class:"btn btn-primary" %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+    <!-- respostas -->
+    <ul class="comments-list reply-list">
+      <%#= render partial: "comentarios/reply_list", object: @comentarios %>
+    </ul>
+  </li>
+<% end %>

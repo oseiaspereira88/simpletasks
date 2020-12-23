@@ -1,1 +1,5 @@
-document.getElementById("comentarios-list").innerHTML = "<%= j render("list") %>";
+window.setTimeout(function() {
+    document.getElementById("tarefas-list").innerHTML = "<%= j render("home/list_tasks") %>";
+    document.getElementsByClassName("card__num")[0].innerHTML = '<%="#{@tarefas.size}" -%>';
+    document.getElementsByClassName("card__num")[1].innerHTML = '<%="#{@tarefas.size}" -%>';
+}, 100);

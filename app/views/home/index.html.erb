@@ -105,6 +105,9 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
+    .comment-box .new_comentario{
+        display: none;
+    }
 </style>
 
 <div id="container-title" style="width: 100%; position: fixed; z-index: 2;">
@@ -114,7 +117,9 @@
       <div class="" style="display:flex; float: left;">
         <div style="text-align: left; width: 300px; padding: 0; margin: 0;">
           <strong style="font-size: 26px; padding-top: 2px; padding-bottom: 2px; height: 30px">Tarefas do dia</strong>
-          <h6 style="font-size: 18px; height: 22px; padding: 0; margin: 0;">Segunda-feira 20</h6>
+          <h6 style="font-size: 18px; height: 22px; padding: 0; margin: 0;">
+            &nbsp<%= I18n.with_locale(:'pt-BR') { I18n.localize(Time.zone.now, format: "%A, %d de %B") } -%>  &nbsp
+          </h6>
         </div>
       </div>
     </div>
@@ -875,10 +880,15 @@
 
     function toggleReplyForm(e) {
         var comentario = e.parentElement.parentElement;
-        var form = comentario.getElementsByClassName("comentarioForm");
+        var form = comentario.getElementsByClassName("new_comentario");
 
         if(form.item(0).style.display=="none"){
             form.item(0).style.display = "block";
+            e.style.webkitTransform = 'rotate('+90+'deg)';
+            e.style.mozTransform    = 'rotate('+90+'deg)';
+            e.style.msTransform     = 'rotate('+90+'deg)';
+            e.style.oTransform      = 'rotate('+90+'deg)';
+            e.style.transform       = 'rotate('+90+'deg)';
         } else{
             form.item(0).style.display = "none";
         }
@@ -944,6 +954,10 @@
     function openSignInCard(){
         $("#card-login").hide(400);
         $("#card-sign-in").slideDown(800);
+    }
+
+    function cancelEditTaskForm(){
+        document.getElementById("tarefas-list").innerHTML = "<%= j render("home/list_tasks") %>";
     }
 </script>
 

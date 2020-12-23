@@ -26,7 +26,6 @@
     }
 
     .card-tarefa .cardHeader {
-        cursor: pointer;
         width: 100%;
         height: 72px;
         padding-top: 16px;
@@ -104,19 +103,32 @@
         </span>
       <span class="cardHeaderTextContainer" style="width: 80%; height: 100%; padding: 0;">
         <div class="cardHeaderTitle" style="height: auto; padding: 0; margin: 0; width: 100%;">
-          <strong onclick="toggleCardtarefa(<%= @tarefas.index(tarefa) %>)"><%= tarefa.titulo -%></strong>
+          <a onclick="toggleCardtarefa(<%= @tarefas.index(tarefa) %>)" style="cursor: pointer"><strong><%= tarefa.titulo -%></strong></a>
         </div>
         <div class="cardHeaderSupportingText" style="height: auto; padding: 0; margin: 0; width: 100%;">
           <%= "#{tarefa.state}" -%> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
           Entregar: &nbsp <%= "#{tarefa.entrega_date}" -%>  &nbsp
-          <a onclick="toggleEditForm(<%= tarefa.id %>)" style="color: #3e5eb3;">Editar </a>
-          <%= link_to 'Excluir', tarefa, method: :delete, data: { confirm: 'Tem certeza?' } -%>
+          <a onclick="toggleEditForm(<%= tarefa.id %>)" style="color: #3e5eb3; cursor: pointer">Editar </a>
+          <%= link_to 'Excluir', tarefa, remote:true, method: :delete, data: { confirm: 'Tem certeza?' } -%>
         </div>
       </span>
     </section>
 
     <div id="edit_task_form<%= tarefa.id %>" style="display: none; padding: 10px; margin: 6px; ">
-      <%= render partial: "edit_task_form", object: tarefa %>
+      <%= form_for tarefa, remote:true do |f| -%>
+        <div class="field" style="padding: 6px;">
+          <strong>Título</strong><br>
+          <%= f.text_field :titulo, value: tarefa.titulo, class:"text_field form-control" -%><br>
+          <strong>Descrição</strong><br>
+          <%= f.text_area :descricao, value: tarefa.descricao, class:"text_area form-control" -%><br>
+          <strong>Entrega</strong>
+          <%= f.date_field :entrega_date, value: tarefa.entrega_date, class:"date_field" -%><br>
+        </div>
+        <div class="actions" style="text-align: right;">
+          <button onclick="cancelEditTaskForm()" type="button" class="btn btn-primary" style="width: auto; height: auto; float: right; margin-left: 16px;">Cancelar</button>
+          <%= f.submit "Salvar", class:"btn btn-primary right" -%>
+        </div>
+      <% end %>
     </div>
 
     <section class="nonSharedContent">
@@ -138,121 +150,31 @@
       <div class="greyLine" style="background-color: white;">
         <div class="comments-container" style="width: auto; margin-right: 10%;">
           <h6 style="font-size: 18px; height: 22px; padding: 0; margin: 0; float: left; margin-bottom: 8px;">
-            <strong>Comentários</strong></h6>
+            <strong>Comentários</strong></h6><br>
 
-          <form id="comentarioForm">
-            <div class="form-group">
-              <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
+          <%= form_for @comentario, remote:true do |f| %>
+            <div class="field">
+              <%= hidden_field_tag "tarefa_id", tarefa.id %><br>
+              <%= f.text_field :texto, id:"inputComentario#{tarefa.id}", class:"form-control", placeholder:"Escreva seu comentário aqui..." %><br>
             </div>
-            <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
-          </form>
+            <div class="actions">
+              <%= f.submit "Comentar", class:"btn btn-primary" %>
+            </div>
+          <% end %>
 
-          <ul id="comments-list" class="comments-list" style="width: auto;">
+          <style>
+              .actions .btn{
+                  float: right; margin: 0; margin-bottom: 3px;
+              }
+          </style>
 
-            <li>
-              <div class="comment-main-level" style="width: auto;">
-                <!-- Avatar -->
-                <div class="comment-avatar">
-                  <img src="https://avatars0.githubusercontent.com/u/36075604?s=400&u=0add815dd2b67fb4677473b098909061db475b9b&v=4" alt=""></div>
-                <!-- Contenedor del Comentario -->
-                <div class="comment-box" style="width: 80%;">
-                  <div class="comment-head" style="height: auto;">
-                    <i class="fa fa-heart"></i>
-                    <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
-                    <span>À 20 minutos</span>
-                    <br>
-                    <h6 class="comment-name">
-                      <a href="#">
-                        <strong><%= "Oséias Pereira" %></strong></a> comentou
-                    </h6>
-
-                  </div>
-                  <div class="comment-content">
-                    Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
-                  </div>
-
-                  <form class="comentarioForm" style="display: none; padding: 10px; background-color: #fafafa;">
-                    <div class="form-group">
-                      <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
-                  </form>
-
-                </div>
-              </div>
-
-              <!-- respostas -->
-              <ul class="comments-list reply-list">
-                <li>
-                  <!-- Avatar -->
-                  <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>
-                  <!-- Contenedor del Comentario -->
-                  <div class="comment-box" style="width: 80%;">
-                    <div class="comment-head">
-                      <i class="fa fa-heart"></i>
-                      <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
-                      <span>À 20 minutos</span>
-                      <br>
-                      <h6 class="comment-name">
-                        <a href="#">
-                          <strong><%= "Oséias Pereira" %></strong></a> comentou
-                      </h6>
-                    </div>
-                    <div class="comment-content">
-                      Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
-                    </div>
-
-                    <form class="comentarioForm" style="display: none; padding: 10px; background-color: #f6f6f6;">
-                      <div class="form-group">
-                        <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
-                      </div>
-                      <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
-                    </form>
-
-                  </div>
-                </li>
-              </ul>
-            </li>
-
-            <li style="background-color: white;">
-              <div class="comment-main-level" style="width: auto;">
-                <!-- Avatar -->
-                <div class="comment-avatar">
-                  <img src="https://avatars0.githubusercontent.com/u/36075604?s=400&u=0add815dd2b67fb4677473b098909061db475b9b&v=4" alt=""></div>
-                <!-- Contenedor del Comentario -->
-                <div class="comment-box" style="width: 80%;">
-                  <div class="comment-head" style="height: auto;">
-                    <i class="fa fa-heart"></i>
-                    <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
-                    <span>À 20 minutos</span>
-                    <br>
-                    <h6 class="comment-name">
-                      <a href="#">
-                        <strong><%= "Oséias Pereira" %></strong></a> comentou
-                    </h6>
-
-                  </div>
-                  <div class="comment-content">
-                    Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
-                  </div>
-
-                  <form class="comentarioForm" style="display: none; padding: 10px; background-color: #f5f5f5;">
-                    <div class="form-group">
-                      <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
-                  </form>
-
-                </div>
-              </div>
-            </li>
-
+          <ul id="comments-list<%=tarefa.id%>" class="comments-list" style="width: auto;">
+            <%= render partial: "comentarios/comentario_list", object: [@comentarios, :parent_id => tarefa.id] %>
           </ul>
         </div>
 
-
       </div>
-      <div class="greyLine"></div>
+      <i onclick="toggleCardtarefa(<%= @tarefas.index(tarefa) %>)" style="cursor: pointer; float: right; margin: 16px;" class="fa fa-reply"></i>
     </section>
   </div>
 <% end %>

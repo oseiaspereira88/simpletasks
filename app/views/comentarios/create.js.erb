@@ -1,1 +1,8 @@
-document.getElementById("comentarios-list").innerHTML = "<%= j render("list") %>";
+document.getElementById("comments-list<%=@tarefa.id%>").innerHTML = "<%= j render("comentarios/comentario_list") %>";
+
+const els = document.getElementById("comments-list<%=@tarefa.id%>").getElementsByClassName("edit_comentario");
+for (var i=0; i<els.length; i++){
+    els[i].style.display = "none";
+    els[i].classList.add("new_comentario");
+    els[i].getElementsByTagName("input")[2].value = "";
+}
