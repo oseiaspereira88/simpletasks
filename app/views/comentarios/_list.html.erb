@@ -1,0 +1,19 @@
+ <table id="comentario_table">
+    <thead>
+    <tr>
+      <th>Id</td>
+      <th>Comentário</td>
+    </tr>
+    </thead>
+    <tbody>
+    <% @comentarios.each do |comentario| %>
+      <tr>
+        <td><%= comentario.id %></td>
+        <td>
+          <%= link_to "#{comentario.texto}", comentario, remote:true, method: :get -%>
+          <%= link_to 'Excluir', comentario, remote:true, method: :delete, data: { confirm: 'Tem certeza?' } -%>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>

@@ -1,0 +1,258 @@
+<style>
+    .card-tarefa {
+        margin-top: 24px;
+        height: auto;
+        width: 100%;
+        border-radius: 8px;
+        background-color: #fefefe;
+        border: none;
+        border-color: #cfcfcf;
+        /*height: 88px;*/
+        overflow: hidden;
+        transition: 375ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .cardActive {
+        box-shadow: 0 1px 4px rgb(237, 241, 248), 0 1px 4px rgb(164, 198, 255);
+        border-style: solid;
+        border-width: 1px;
+        /*height: 332px;*/
+
+        /*border-width: 1px;*/
+    }
+
+    .card-tarefa .nonSharedContent {
+        display: none;
+    }
+
+    .card-tarefa .cardHeader {
+        cursor: pointer;
+        width: 100%;
+        height: 72px;
+        padding-top: 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .cardHeaderTextContainer {
+        display: inline-block;
+        height: 100%;
+        padding-top: 4px;
+        width: auto;
+    }
+
+    .cardHeaderTitle {
+        width: 184px;
+        height: 16px;;
+        margin-bottom: 16px
+    }
+
+    .cardHeaderSupportingText {
+        height: 16px;
+        width: 136px;
+    }
+
+    .cardAvatarContainer {
+        display: inline-block;
+        margin: 0 16px;
+        height: 100%;
+        float: left;
+    }
+
+    .cardAvatar {
+        width: 56px;
+        height: 56px;
+        border-bottom-right-radius: 50%;
+        border-top-right-radius: 50%;
+        padding-right: 2px;
+        background-color: #2196f2;
+        display: inline-block;
+    }
+
+    .greySquaresContainer {
+        width: 200%;
+        padding: 10px;
+    }
+
+    .greySquare {
+        margin: 8px;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        background-color: #ededed;
+        border-radius: 2px;
+    }
+
+    .greyLine {
+        width: 100%;
+        height: auto;
+        margin: 24px 16px;
+        background-color: #ededed;
+    }
+
+    .greyLine:first-of-type {
+        width: 100%;
+        height: auto;
+        margin: 0 16px;
+        border-radius: 6px;
+    }
+</style>
+<% @tarefas.each do |tarefa| %>
+  <div class="card-tarefa card">
+    <section class="cardHeader" style="padding: 0px 0px 0px 0px; height: auto;">
+        <span class="cardAvatarContainer" style="height: auto; margin: 0;">
+            <img class="cardAvatar" style="padding: 0; padding-right: 2px; margin: 0; margin-right: 16px;" src="https://raw.githubusercontent.com/oseiaspereira88/simpletasks/main/trabalho%2002.jpg"></img>
+        </span>
+      <span class="cardHeaderTextContainer" style="width: 80%; height: 100%; padding: 0;">
+        <div class="cardHeaderTitle" style="height: auto; padding: 0; margin: 0; width: 100%;">
+          <strong onclick="toggleCardtarefa(<%= @tarefas.index(tarefa) %>)"><%= tarefa.titulo -%></strong>
+        </div>
+        <div class="cardHeaderSupportingText" style="height: auto; padding: 0; margin: 0; width: 100%;">
+          <%= "#{tarefa.state}" -%> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+          Entregar: &nbsp <%= "#{tarefa.entrega_date}" -%>  &nbsp
+          <a onclick="toggleEditForm(<%= tarefa.id %>)" style="color: #3e5eb3;">Editar </a>
+          <%= link_to 'Excluir', tarefa, method: :delete, data: { confirm: 'Tem certeza?' } -%>
+        </div>
+      </span>
+    </section>
+
+    <div id="edit_task_form<%= tarefa.id %>" style="display: none; padding: 10px; margin: 6px; ">
+      <%= render partial: "edit_task_form", object: tarefa %>
+    </div>
+
+    <section class="nonSharedContent">
+      <div class="greyLine" style="padding: 8px; width: auto; margin-top: 16px;"><strong>Descrição da Tarefa:</strong><br>
+        <%= tarefa.descricao -%>
+      </div>
+
+      <br><strong style="margin-left: 16px;">Anexos</strong><br>
+      <section class="greySquaresContainer">
+            <span class="greySquare" style="text-align: center; padding-top: 11px;">
+                <div class="button" onclick="openSelectAnexoFile()" style=" width: 38px; height: 38px; padding: 2px;" href="#">
+                  <img height="34px" width="34px" src="https://raw.githubusercontent.com/oseiaspereira88/Sverse-Mobile/master/Sverse/src/main/res/drawable/add_button6.png">
+                </div>
+            </span>
+        <span class="greySquare"></span>
+        <span class="greySquare"></span>
+        <span class="greySquare"></span>
+      </section>
+      <div class="greyLine" style="background-color: white;">
+        <div class="comments-container" style="width: auto; margin-right: 10%;">
+          <h6 style="font-size: 18px; height: 22px; padding: 0; margin: 0; float: left; margin-bottom: 8px;">
+            <strong>Comentários</strong></h6>
+
+          <form id="comentarioForm">
+            <div class="form-group">
+              <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
+            </div>
+            <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
+          </form>
+
+          <ul id="comments-list" class="comments-list" style="width: auto;">
+
+            <li>
+              <div class="comment-main-level" style="width: auto;">
+                <!-- Avatar -->
+                <div class="comment-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/36075604?s=400&u=0add815dd2b67fb4677473b098909061db475b9b&v=4" alt=""></div>
+                <!-- Contenedor del Comentario -->
+                <div class="comment-box" style="width: 80%;">
+                  <div class="comment-head" style="height: auto;">
+                    <i class="fa fa-heart"></i>
+                    <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
+                    <span>À 20 minutos</span>
+                    <br>
+                    <h6 class="comment-name">
+                      <a href="#">
+                        <strong><%= "Oséias Pereira" %></strong></a> comentou
+                    </h6>
+
+                  </div>
+                  <div class="comment-content">
+                    Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
+                  </div>
+
+                  <form class="comentarioForm" style="display: none; padding: 10px; background-color: #fafafa;">
+                    <div class="form-group">
+                      <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
+                  </form>
+
+                </div>
+              </div>
+
+              <!-- respostas -->
+              <ul class="comments-list reply-list">
+                <li>
+                  <!-- Avatar -->
+                  <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_2_zps7de12f8b.jpg" alt=""></div>
+                  <!-- Contenedor del Comentario -->
+                  <div class="comment-box" style="width: 80%;">
+                    <div class="comment-head">
+                      <i class="fa fa-heart"></i>
+                      <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
+                      <span>À 20 minutos</span>
+                      <br>
+                      <h6 class="comment-name">
+                        <a href="#">
+                          <strong><%= "Oséias Pereira" %></strong></a> comentou
+                      </h6>
+                    </div>
+                    <div class="comment-content">
+                      Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
+                    </div>
+
+                    <form class="comentarioForm" style="display: none; padding: 10px; background-color: #f6f6f6;">
+                      <div class="form-group">
+                        <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
+                      </div>
+                      <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
+                    </form>
+
+                  </div>
+                </li>
+              </ul>
+            </li>
+
+            <li style="background-color: white;">
+              <div class="comment-main-level" style="width: auto;">
+                <!-- Avatar -->
+                <div class="comment-avatar">
+                  <img src="https://avatars0.githubusercontent.com/u/36075604?s=400&u=0add815dd2b67fb4677473b098909061db475b9b&v=4" alt=""></div>
+                <!-- Contenedor del Comentario -->
+                <div class="comment-box" style="width: 80%;">
+                  <div class="comment-head" style="height: auto;">
+                    <i class="fa fa-heart"></i>
+                    <i onclick="toggleReplyForm(this)" class="fa fa-reply"></i>
+                    <span>À 20 minutos</span>
+                    <br>
+                    <h6 class="comment-name">
+                      <a href="#">
+                        <strong><%= "Oséias Pereira" %></strong></a> comentou
+                    </h6>
+
+                  </div>
+                  <div class="comment-content">
+                    Em tempos de distanciamento social, encontramos uma maneira de continuarmos próximos ajudando uns aos outros.
+                  </div>
+
+                  <form class="comentarioForm" style="display: none; padding: 10px; background-color: #f5f5f5;">
+                    <div class="form-group">
+                      <input type="text" class="form-control" id="inputComentario" placeholder="Escreva seu comentário aqui...">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="float: right; margin: 0; margin-bottom: 3px">Comentar</button>
+                  </form>
+
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+
+
+      </div>
+      <div class="greyLine"></div>
+    </section>
+  </div>
+<% end %>

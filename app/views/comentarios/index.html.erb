@@ -1,0 +1,16 @@
+<%= form_for(@comentario, remote:true) do |f|%>
+  <div class="field">
+    <%= f.label :texto, class:"label_form" %>
+    <%= f.text_area :texto, class:"text_area_form" %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Salvar"%>
+  </div>
+
+  <div id="comentarios-list">
+    <%= render partial: "list", object: @comentarios %>
+  </div>
+<% end %>
+
+<div id="div-edit" style="height: auto; width: auto;">
+</div>

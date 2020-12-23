@@ -1,0 +1,9 @@
+<%= form_for @comentario, remote:true do |f| %>
+  <div class="field">
+    <%= f.label :texto, class:"label_form"  %><br>
+    <%= f.text_field :texto, class:"text_field" %><br>
+  </div>
+  <div class="actions">
+    <%= f.submit "Update" %>
+  </div>
+<% end %>
